@@ -1,6 +1,7 @@
 import de.bezier.guido.*;
 public final static int NUM_ROWS = 20;
 public final static int NUM_COLS = 20;
+public final static int NUM_BOMBS = 30;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> bombs = new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 
@@ -8,23 +9,18 @@ public void setup ()
 {
     size(400, 400);
     textAlign(CENTER,CENTER);
-    
-    // make the manager
     Interactive.make( this );
-    
-    //your code to declare and initialize buttons goes here
     buttons = new MSButton[NUM_ROWS][NUM_COLS];
     for (int r=0; r<NUM_ROWS; r++) {
         for (int c=0; c<NUM_COLS; c++) {
             buttons[r][c] = new MSButton(r,c);
         }
     }
-    
     setBombs();
 }
 public void setBombs()
 {
-    for (int q=0; q<50; q++) {
+    for (int q=0; q<NUM_BOMBS; q++) {
         int randomR = (int)(Math.random()*NUM_ROWS);
         int randomC = (int)(Math.random()*NUM_COLS);
         if(!bombs.contains(buttons[randomR][randomC]))
@@ -33,37 +29,37 @@ public void setBombs()
 }
 public void draw ()
 {
-    background( 0 );
+    background(0);
     if(isWon())
+    {
         displayWinningMessage();
+    }
 }
 public boolean isWon()
 {
     for (int r=0; r<NUM_ROWS; r++)
+    {
+      for (int c=0; c<NUM_COLS; c++)
       {
-        for (int c=0; c<NUM_COLS; c++)
-        {
-          if (!buttons[r][c].isMarked() && !bombs.contains(buttons[r][c]))
-          {
-            return true;
-          }
-        }
+        if (!buttons[r][c].isClicked() && !bombs.contains(buttons[r][c]))
+          return false;
       }
-      return false;
+    }
+    return true;
 }
 public void displayLosingMessage()
 {
     for (int r=0; r<NUM_ROWS; r++)
+    {
+      for (int c=0; c<NUM_COLS; c++)
       {
-        for (int c=0; c<NUM_COLS; c++)
+        if (bombs.contains(buttons[r][c])&& !buttons[r][c].isClicked())
         {
-          if (bombs.contains(buttons[r][c])&& !buttons[r][c].isClicked())
-          {
-            buttons[r][c].marked=false;
-            buttons[r][c].clicked=true;
-          }
+          buttons[r][c].marked=false;
+          buttons[r][c].clicked=true;
         }
       }
+    }
     buttons[9][6].setLabel("G");
     buttons[9][7].setLabel("a");
     buttons[9][8].setLabel("m");
@@ -72,17 +68,24 @@ public void displayLosingMessage()
     buttons[9][12].setLabel("v");
     buttons[9][13].setLabel("e");
     buttons[9][14].setLabel("r");
+    noLoop();
 }
 public void displayWinningMessage()
 {
-    background(0,255,0);
+      buttons[9][7].setLabel("Y");
+      buttons[9][8].setLabel("o");
+      buttons[9][9].setLabel("u");
+      buttons[9][11].setLabel("W");
+      buttons[9][12].setLabel("o");
+      buttons[9][13].setLabel("n");
+      noLoop();
 }
 
 public class MSButton
 {
     private int r, c;
     private float x,y, width, height;
-    private boolean clicked, marked;
+    private boolean clicked, marked, flagged;
     private String label;
     
     public MSButton ( int rr, int cc )
@@ -95,7 +98,7 @@ public class MSButton
         y = r*height;
         label = "";
         marked = clicked = false;
-        marked = Math.random() < .5;
+        flagged = false;
         Interactive.add( this ); // register it with the manager
     }
     public boolean isMarked()
@@ -106,12 +109,15 @@ public class MSButton
     {
         return clicked;
     }
-    // called by manager
-    
     public void mousePressed () 
     {
         clicked = true;
-        if(keyPressed==true)
+        if(mouseButton == RIGHT)
+        {
+          clicked = false;
+          flagged = !flagged;
+        }
+        else if(keyPressed==true)
         {
             if(marked == false)
             {
@@ -154,13 +160,12 @@ public class MSButton
             if (isValid(r-1,c+1) && buttons[r-1][c+1].clicked==false)
                 buttons[r-1][c+1].mousePressed();
         }
-
     }
-
     public void draw () 
     {    
-        
-        if( clicked && bombs.contains(this) ) 
+        if(flagged)
+            fill(0,255,0);
+        else if( clicked && bombs.contains(this) ) 
             fill(255,0,0);
         else if(clicked)
             fill( 200 );
