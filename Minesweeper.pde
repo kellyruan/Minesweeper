@@ -34,7 +34,7 @@ public void draw ()
     {
         displayWinningMessage();
     }
-}
+} 
 public boolean isWon()
 {
     for (int r=0; r<NUM_ROWS; r++)
