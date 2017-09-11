@@ -78,6 +78,12 @@ public void displayWinningMessage()
       buttons[9][11].setLabel("W");
       buttons[9][12].setLabel("o");
       buttons[9][13].setLabel("n");
+      buttons[9][7].setFill(0,0,255);
+      buttons[9][8].setLabel("o");
+      buttons[9][9].setLabel("u");
+      buttons[9][11].setLabel("W");
+      buttons[9][12].setLabel("o");
+      buttons[9][13].setLabel("n");
       noLoop();
 }
 
