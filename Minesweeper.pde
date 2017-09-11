@@ -4,7 +4,6 @@ public final static int NUM_COLS = 20;
 public final static int NUM_BOMBS = 10;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> bombs = new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
-boolean gameOver;
 
 public void setup ()
 {
@@ -18,7 +17,6 @@ public void setup ()
         }
     }
     setBombs();
-    gameOver = false;
 }
 public void setBombs()
 {
@@ -32,7 +30,7 @@ public void setBombs()
 public void draw ()
 {
     background(0);
-    if(!gameOver && isWon())
+    if(isWon())
     {
         displayWinningMessage();
     }
@@ -43,7 +41,7 @@ public boolean isWon()
     {
       for (int c=0; c<NUM_COLS; c++)
       {
-        if (!buttons[r][c].isMarked() && !buttons[r][c].isClicked())
+        if (!buttons[r][c].isClicked() && !bombs.contains(buttons[r][c]))
           return false;
       }
     }
@@ -63,7 +61,6 @@ public void displayLosingMessage()
       }
     }
     buttons[9][6].setLabel("G");
-    buttons[9][6].setBackground(0,0,255);
     buttons[9][7].setLabel("a");
     buttons[9][8].setLabel("m");
     buttons[9][9].setLabel("e");
@@ -75,6 +72,7 @@ public void displayLosingMessage()
 }
 public void displayWinningMessage()
 {
+      fill(0,0,255);
       buttons[9][7].setLabel("Y");
       buttons[9][8].setLabel("o");
       buttons[9][9].setLabel("u");
@@ -140,8 +138,7 @@ public class MSButton
                     buttons[r+1][c].mousePressed();
             }
         }
-        else if (bombs.contains(this) && gameOver==false)
-            gameOver==true;
+        else if (bombs.contains(this))
             displayLosingMessage();
         else if (countBombs(r,c)>0)
             setLabel(""+countBombs(r,c));
@@ -176,7 +173,7 @@ public class MSButton
         else 
             fill( 100 );
 
-        rect(x, y, width, height, 5);
+        rect(x, y, width, height);
         fill(0);
         text(label,x+width/2,y+height/2);
     }
