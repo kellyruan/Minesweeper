@@ -74,7 +74,6 @@ public void displayWinningMessage()
 {
       fill(0,0,255);
       buttons[9][7].setLabel("Y");
-      buttons[9][7].setBackground(0);
       buttons[9][7].setForeground(255);
       buttons[9][8].setLabel("o");
       buttons[9][9].setLabel("u");
